@@ -1,0 +1,31 @@
+services:
+  identity-service:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    env_file:
+      - ./apps/auth/.env
+    container_name: endous_finance_identity_container
+    command: pnpm run start:dev auth
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/src/app
+  
+  endous-finance-pgdb:
+    image: postgres:15
+    container_name: endous_finance_db_container
+    ports:
+      - '5432:5432'
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: ef_admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: endous_finance_db
+    volumes:
+      - endous-finance-data:/var/lib/postgresql/data
+
+volumes:
+  endous-finance-data:
